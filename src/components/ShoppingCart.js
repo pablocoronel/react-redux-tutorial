@@ -52,7 +52,10 @@ class ShoppingCart extends Component {
   }
 
   removeFromCart(product) {
-
+    store.dispatch({
+      type : "REMOVE_FROM_CART",
+      product
+    })
   }
 }
 
