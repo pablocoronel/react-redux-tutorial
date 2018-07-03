@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Panel, Table, Button, Glyphicon } from 'react-bootstrap';
-import store from '../store.js';
+// Ya no es necesario el store
 import {removeFromCart} from '../actionCreators.js';
+import {connect} from 'react-redux';
 
 const styles = {
   footer: {
@@ -10,39 +11,28 @@ const styles = {
 }
 
 
-class ShoppingCart extends Component {
-  constructor() {
-    super();
-    this.removeFromCart = this.removeFromCart.bind(this);
+// Deja de ser una clase, es una funcion ahora, se borra el constructor
+// const ShoppingCart = (props) => {
 
-    this.state = {
-      cart: []
-    }
+// Parte el parametro 'props' en sus llaves (destructurar un argumento en ES6)
+const ShoppingCart = ({cart, removeFromCart}) => {
 
-    store.subscribe(() => {
-      this.setState({
-        cart : store.getState().cart
-      })
-    });
-  }
-
-  render() {
     return (
       <Panel header="Shopping Cart">
         <Table fill>
           <tbody>
-            {this.state.cart.map(product =>
+            {cart.map(product =>
               <tr key={product.id}>
                 <td>{product.name}</td>
                 <td className="text-right">${product.price}</td>
-                <td className="text-right"><Button bsSize="xsmall" bsStyle="danger" onClick={() => this.removeFromCart(product)}><Glyphicon glyph="trash" /></Button></td>
+                <td className="text-right"><Button bsSize="xsmall" bsStyle="danger" onClick={() => removeFromCart(product)}><Glyphicon glyph="trash" /></Button></td>
               </tr>
             )}
           </tbody>
           <tfoot>
             <tr>
               <td colSpan="4" style={styles.footer}>
-                Total: ${this.state.cart.reduce((sum, product) => sum + product.price, 0)}
+                Total: ${cart.reduce((sum, product) => sum + product.price, 0)}
               </td>
             </tr>
           </tfoot>
@@ -50,11 +40,24 @@ class ShoppingCart extends Component {
 
       </Panel>
     )
-  }
 
-  removeFromCart(product) {
-    store.dispatch(removeFromCart(product))
+  // quitado el dispatch
+}
+
+// mapeo del estado
+const mapStateToProps = (state) => {
+  return {
+    cart : state.cart
   }
 }
 
-export default ShoppingCart;
+// mapeo del dispatch
+const mapDispatchToProps = (dispatch) => {
+  return {
+    removeFromCart(product) {
+      dispatch(removeFromCart(product))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ShoppingCart);
