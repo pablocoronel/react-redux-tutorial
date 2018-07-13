@@ -4,6 +4,9 @@ import App from './App';
 import './index.css';
 import store from './store.js';
 import {Provider} from 'react-redux';
+import {loadProducts} from './actionCreators.js';
+
+store.dispatch(loadProducts());
 
 ReactDOM.render(
 	<Provider store={store}>
